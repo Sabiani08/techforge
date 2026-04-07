@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="sq">
+  <head>
+    <title>Personalizo Laptopin Tënd | TechForge</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0b0e17;
+        color: white;
+      }
+      .header {
+        padding: 30px;
+        text-align: center;
+      }
+      .header h1 {
+        font-size: 40px;
+        color: #72d6ff;
+      }
+      .model-info {
+        color: #6fbaff;
+        margin-top: 10px;
+        font-size: 18px;
+      }
+      .nav {
+        padding: 20px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+      }
+      .nav .logo {
+        font-size: 25px;
+        font-weight: bold;
+        color: #72d6ff;
+        text-decoration: none;
+      }
+      .back-btn {
+        color: #72d6ff;
+        text-decoration: none;
+        border: 1px solid #1c2539;
+        padding: 8px 16px;
+        border-radius: 6px;
+        transition: 0.3s;
+      }
+      .back-btn:hover {
+        background: #72d6ff;
+        color: #0b0e17;
+      }
+      .customizer {
+        max-width: 800px;
+        background: #111622;
+        border: 1px solid #1f2738;
+        margin: 40px auto;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      }
+      .section-title {
+        margin-bottom: 10px;
+        font-size: 20px;
+        color: #72d6ff;
+      }
+      select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 25px;
+        background: #151a25;
+        border: 1px solid #222b3a;
+        color: white;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: 0.3s;
+        font-family: inherit;
+      }
+      select:hover {
+        border-color: #4cd4ff;
+      }
+      .color-boxes {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+      .color {
+        width: 45px;
+        height: 45px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: 0.3s;
+      }
+      .color:hover {
+        transform: scale(1.1);
+      }
+      .color.selected {
+        border-color: #4cd4ff;
+        box-shadow: 0 0 10px #4cd4ff;
+        transform: scale(1.1);
+      }
+      .price-box {
+        margin-top: 30px;
+        font-size: 24px;
+        text-align: center;
+        color: #4cd4ff;
+        background: rgba(80, 215, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid rgba(80, 215, 255, 0.3);
+      }
+      .btn-row {
+        display: flex;
+        gap: 14px;
+        margin-top: 25px;
+      }
+      .add-btn {
+        flex: 1;
+        padding: 15px;
+        background: #1a2535;
+        color: #72d6ff;
+        border: 1px solid #2a3a5c;
+        border-radius: 10px;
+        font-size: 18px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+      }
+      .add-btn:hover {
+        background: #1f2d40;
+        transform: translateY(-2px);
+      }
+      .buy-btn {
+        flex: 1;
+        padding: 15px;
+        background: #4cd4ff;
+        color: black;
+        border: none;
+        border-radius: 10px;
+        font-size: 18px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+      }
+      .buy-btn:hover {
+        background: #67dcff;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(80, 215, 255, 0.3);
+      }
+      .base-model {
+        background: rgba(80, 215, 255, 0.1);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 25px;
+        border-left: 4px solid #4cd4ff;
+      }
+      .base-model h3 {
+        margin: 0 0 10px 0;
+        color: #72d6ff;
+      }
+      .base-specs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .base-spec {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+      }
+      .info-box {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #8a8fa3;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="nav">
+      <a href="home.html" class="logo">⚡ TechForge</a>
+      <a href="home.html" class="back-btn">← Kthehu në Dyqan</a>
+    </div>
+
+    <div class="header">
+      <h1>Personalizo Laptopin Tënd</h1>
+      <div class="model-info" id="model-info">
+        Po ngarkohet përzgjedhja jote...
+      </div>
+    </div>
+
+    <div class="customizer">
+      <div class="base-model">
+        <h3>Konfigurimi Bazë</h3>
+        <div class="base-specs" id="base-specs"></div>
+      </div>
+
+      <h3 class="section-title">Procesor (CPU)</h3>
+      <select id="cpu" onchange="updatePrice()"></select>
+
+      <h3 class="section-title">Grafikë (GPU)</h3>
+      <select id="gpu" onchange="updatePrice()"></select>
+
+      <h3 class="section-title">Memorie (RAM)</h3>
+      <select id="ram" onchange="updatePrice()"></select>
+
+      <h3 class="section-title">Ruajtje (SSD)</h3>
+      <select id="storage" onchange="updatePrice()"></select>
+
+      <h3 class="section-title">Ngjyrë</h3>
+      <div class="color-boxes">
+        <div class="color" data-color="E Zezë" style="background: #000"></div>
+        <div
+          class="color"
+          data-color="Argjendi"
+          style="background: #c0c0c0"
+        ></div>
+        <div class="color" data-color="Blu" style="background: #1f6aff"></div>
+        <div
+          class="color"
+          data-color="E Kuqe"
+          style="background: #e63939"
+        ></div>
+      </div>
+
+      <div class="price-box">Çmimi Total: $<span id="price">0</span></div>
+
+      <div class="btn-row">
+        <button class="add-btn" onclick="goToCheckout()">
+          🛒 Shto në Shportë
+        </button>
+        <button class="buy-btn" onclick="goToCheckout()">🛍️ Bli Tani</button>
+      </div>
+
+      <div class="info-box">
+        ⚠️ Çmimet janë në dollarë amerikanë. Pagesa pranohet me Visa, MasterCard
+        dhe PayPal.
+      </div>
+    </div>
+
+    <script>
+      // Read everything from URL — no guessing, no hardcoded matching
+      const p = new URLSearchParams(window.location.search);
+      const basePrice = parseInt(p.get("basePrice")) || 0;
+      const baseCPU = p.get("cpu") || "";
+      const baseGPU = p.get("gpu") || "";
+      const baseRAM = p.get("ram") || "16";
+      const baseSTOR = p.get("storage") || "512";
+      const prodName = p.get("name") || p.get("model") || "Laptop";
+      const prodBrand = p.get("brand") || "TechForge";
+      const prodImage = p.get("image") || "";
+
+      document.getElementById("model-info").textContent =
+        `Po personalizoni: ${prodBrand} ${prodName}`;
+
+      // Show base specs
+      const storLabel =
+        parseInt(baseSTOR) >= 1024
+          ? parseInt(baseSTOR) / 1024 + "TB SSD"
+          : baseSTOR + "GB SSD";
+      document.getElementById("base-specs").innerHTML = `
+        <div class="base-spec">${baseCPU}</div>
+        <div class="base-spec">${baseGPU || "Grafikë të Integruar"}</div>
+        <div class="base-spec">${baseRAM}GB RAM</div>
+        <div class="base-spec">${storLabel}</div>
+      `;
+
+      // ── CPU UPGRADES ──
+      // Base CPU is always first at +$0. Upgrades are relative to base price.
+      const cpuUpgrades = [
+        { name: baseCPU + " (Bazë)", price: 0, value: baseCPU },
+        { name: "Intel Core i7 (Upgrade)", price: 150, value: "i7-upgrade" },
+        { name: "Intel Core i9 (Upgrade)", price: 350, value: "i9-upgrade" },
+        { name: "AMD Ryzen 9 (Upgrade)", price: 300, value: "ryzen9-upgrade" },
+        { name: "Apple M3 Max (Upgrade)", price: 500, value: "m3max-upgrade" },
+      ];
+
+      // Only show CPU upgrades that make sense for this laptop type
+      const isApple =
+        baseCPU.toLowerCase().includes("m3") ||
+        baseCPU.toLowerCase().includes("apple");
+      const isAMD =
+        baseCPU.toLowerCase().includes("ryzen") ||
+        baseCPU.toLowerCase().includes("amd");
+      const isIntel = !isApple && !isAMD;
+
+      const cpuSelect = document.getElementById("cpu");
+      cpuSelect.innerHTML = "";
+      if (isApple) {
+        [
+          { name: baseCPU + " (Bazë)", price: 0, value: baseCPU },
+          {
+            name: "Apple M3 Max (Upgrade)",
+            price: 500,
+            value: "m3max-upgrade",
+          },
+        ].forEach(
+          (o) =>
+            (cpuSelect.innerHTML += `<option value="${o.value}" data-price="${o.price}">${o.name}${o.price > 0 ? " (+$" + o.price + ")" : ""}</option>`),
+        );
+      } else if (isAMD) {
+        [
+          { name: baseCPU + " (Bazë)", price: 0, value: baseCPU },
+          {
+            name: "AMD Ryzen 9 7945HX (Upgrade)",
+            price: 250,
+            value: "ryzen9-upgrade",
+          },
+        ].forEach(
+          (o) =>
+            (cpuSelect.innerHTML += `<option value="${o.value}" data-price="${o.price}">${o.name}${o.price > 0 ? " (+$" + o.price + ")" : ""}</option>`),
+        );
+      } else {
+        [
+          { name: baseCPU + " (Bazë)", price: 0, value: baseCPU },
+          { name: "Intel Core i7 (Upgrade)", price: 150, value: "i7-upgrade" },
+          { name: "Intel Core i9 (Upgrade)", price: 350, value: "i9-upgrade" },
+        ].forEach(
+          (o) =>
+            (cpuSelect.innerHTML += `<option value="${o.value}" data-price="${o.price}">${o.name}${o.price > 0 ? " (+$" + o.price + ")" : ""}</option>`),
+        );
+      }
+
+      // ── GPU UPGRADES ──
+      const gpuSelect = document.getElementById("gpu");
+      gpuSelect.innerHTML = "";
+      const baseGPUnorm = (baseGPU || "").toLowerCase().replace(/\s/g, "");
+      const isIntegrated =
+        baseGPUnorm === "integrated" ||
+        baseGPUnorm === "" ||
+        baseGPUnorm.includes("integrated");
+      const hasRTX = baseGPUnorm.includes("rtx");
+      const hasGTX = baseGPUnorm.includes("gtx");
+
+      let gpuList = [];
+      if (isApple) {
+        gpuList = [
+          { name: baseGPU + " (Bazë)", price: 0, value: baseGPU },
+          {
+            name: "Apple M3 Max GPU (Upgrade)",
+            price: 400,
+            value: "m3max-gpu-upgrade",
+          },
+        ];
+      } else if (isIntegrated) {
+        gpuList = [
+          {
+            name: "Grafikë të Integruar (Bazë)",
+            price: 0,
+            value: "integrated",
+          },
+          { name: "NVIDIA RTX 4050 (Upgrade)", price: 250, value: "rtx4050" },
+          { name: "NVIDIA RTX 4060 (Upgrade)", price: 400, value: "rtx4060" },
+        ];
+      } else if (hasGTX) {
+        gpuList = [
+          { name: baseGPU + " (Bazë)", price: 0, value: baseGPU },
+          { name: "NVIDIA RTX 4050 (Upgrade)", price: 200, value: "rtx4050" },
+          { name: "NVIDIA RTX 4060 (Upgrade)", price: 350, value: "rtx4060" },
+        ];
+      } else if (hasRTX) {
+        gpuList = [
+          { name: baseGPU + " (Bazë)", price: 0, value: baseGPU },
+          { name: "NVIDIA RTX 4070 (Upgrade)", price: 300, value: "rtx4070" },
+          { name: "NVIDIA RTX 4090 (Upgrade)", price: 700, value: "rtx4090" },
+        ];
+      } else {
+        gpuList = [
+          {
+            name: baseGPU || "Grafikë të Integruar" + " (Bazë)",
+            price: 0,
+            value: baseGPU || "integrated",
+          },
+        ];
+      }
+      gpuList.forEach(
+        (o) =>
+          (gpuSelect.innerHTML += `<option value="${o.value}" data-price="${o.price}">${o.name}${o.price > 0 ? " (+$" + o.price + ")" : ""}</option>`),
+      );
+
+      // ── RAM UPGRADES ──
+      const ramSelect = document.getElementById("ram");
+      ramSelect.innerHTML = "";
+      const baseRAMint = parseInt(baseRAM);
+      const isUnified = isApple;
+      const ramList = isUnified
+        ? [
+            {
+              label: baseRAMint + "GB Unified (Bazë)",
+              val: baseRAMint,
+              price: 0,
+            },
+            { label: "36GB Unified (Upgrade)", val: 36, price: 300 },
+            { label: "48GB Unified (Upgrade)", val: 48, price: 600 },
+          ]
+        : [
+            { label: baseRAMint + "GB DDR5 (Bazë)", val: baseRAMint, price: 0 },
+            ...(baseRAMint < 32
+              ? [{ label: "32GB DDR5 (Upgrade)", val: 32, price: 120 }]
+              : []),
+            ...(baseRAMint < 64
+              ? [{ label: "64GB DDR5 (Upgrade)", val: 64, price: 260 }]
+              : []),
+          ];
+      ramList.forEach(
+        (o) =>
+          (ramSelect.innerHTML += `<option value="${o.val}" data-price="${o.price}">${o.label}${o.price > 0 ? " (+$" + o.price + ")" : ""}</option>`),
+      );
+
+      // ── STORAGE UPGRADES ──
+      const storSelect = document.getElementById("storage");
+      storSelect.innerHTML = "";
+      const baseSTORint = parseInt(baseSTOR);
+      const storList = [
+        {
+          val: baseSTORint,
+          label:
+            (baseSTORint >= 1024
+              ? baseSTORint / 1024 + "TB"
+              : baseSTORint + "GB") + " SSD (Bazë)",
+          price: 0,
+        },
+        ...(baseSTORint < 1024
+          ? [{ val: 1024, label: "1TB SSD (Upgrade)", price: 100 }]
+          : []),
+        ...(baseSTORint < 2048
+          ? [{ val: 2048, label: "2TB SSD (Upgrade)", price: 220 }]
+          : []),
+      ];
+      storList.forEach(
+        (o) =>
+          (storSelect.innerHTML += `<option value="${o.val}" data-price="${o.price}">${o.label}${o.price > 0 ? " (+$" + o.price + ")" : ""}</option>`),
+      );
+
+      // ── COLORS ──
+      document.querySelectorAll(".color").forEach((c, i) => {
+        c.addEventListener("click", () => {
+          document
+            .querySelectorAll(".color")
+            .forEach((x) => x.classList.remove("selected"));
+          c.classList.add("selected");
+        });
+        if (i === 0) c.classList.add("selected");
+      });
+
+      // ── PRICE ──
+      function updatePrice() {
+        const cpuUp =
+          parseInt(cpuSelect.options[cpuSelect.selectedIndex]?.dataset.price) ||
+          0;
+        const gpuUp =
+          parseInt(gpuSelect.options[gpuSelect.selectedIndex]?.dataset.price) ||
+          0;
+        const ramUp =
+          parseInt(ramSelect.options[ramSelect.selectedIndex]?.dataset.price) ||
+          0;
+        const storUp =
+          parseInt(
+            storSelect.options[storSelect.selectedIndex]?.dataset.price,
+          ) || 0;
+        const total = basePrice + cpuUp + gpuUp + ramUp + storUp;
+        document.getElementById("price").innerText = total.toLocaleString();
+      }
+      updatePrice();
+
+      // ── CHECKOUT ──
+      function goToCheckout() {
+        const total = document
+          .getElementById("price")
+          .innerText.replace(/,/g, "");
+        const color =
+          document
+            .querySelector(".color.selected")
+            ?.getAttribute("data-color") || "E Zezë";
+        const cpuName =
+          cpuSelect.options[cpuSelect.selectedIndex]?.text
+            .replace(" (Bazë)", "")
+            .replace(" (Upgrade)", "") || baseCPU;
+        const gpuName =
+          gpuSelect.options[gpuSelect.selectedIndex]?.text
+            .replace(" (Bazë)", "")
+            .replace(" (Upgrade)", "") || baseGPU;
+        const ramVal = ramSelect.value;
+        const storVal = storSelect.value;
+        window.location.href = `checkout.html?name=${encodeURIComponent(prodName)}&brand=${encodeURIComponent(prodBrand)}&price=${total}&image=${encodeURIComponent(prodImage)}&cpu=${encodeURIComponent(cpuName)}&gpu=${encodeURIComponent(gpuName)}&ram=${ramVal}&storage=${storVal}&color=${encodeURIComponent(color)}`;
+      }
+    </script>
+  </body>
+</html>

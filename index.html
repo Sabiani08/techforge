@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="sq">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TechForge – Hyrje / Regjistrim</title>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        sendPasswordResetEmail,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        setDoc,
+        getDoc,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDuJ33idxuEK4OBuicT3OQ10jFgstPHeR8",
+        authDomain: "techforge-d33e7.firebaseapp.com",
+        projectId: "techforge-d33e7",
+        storageBucket: "techforge-d33e7.appspot.com",
+        messagingSenderId: "1042508194398",
+        appId: "1:1042508194398:web:ea46e7a3f87803fb43cacf",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // LOGIN
+      window.hyrje = async () => {
+        const email = document.querySelector(
+          '.login-form input[type="email"]',
+        ).value;
+        const password = document.querySelector(
+          '.login-form input[type="password"]',
+        ).value;
+
+        if (!email || !password)
+          return showError("login", "Plotësoni të gjitha fushat.");
+
+        try {
+          const userCredential = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password,
+          );
+          const user = userCredential.user;
+
+          // Check role in Firestore
+          try {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists() && userDoc.data().role === "admin") {
+              window.location.href = "admin.html";
+            } else {
+              // If no doc exists, create one with role "user" automatically
+              if (!userDoc.exists()) {
+                await setDoc(doc(db, "users", user.uid), {
+                  email: user.email,
+                  role: "user",
+                  createdAt: serverTimestamp(),
+                });
+              }
+              window.location.href = "home.html";
+            }
+          } catch (firestoreError) {
+            // Firestore failed but login succeeded — just go to home
+            window.location.href = "home.html";
+          }
+        } catch (error) {
+          showError("login", getErrorMessage(error.code));
+        }
+      };
+
+      // SIGNUP
+      window.regjistrohu = async () => {
+        const name = document.querySelector(
+          '.signup-form input[type="text"]',
+        ).value;
+        const email = document.querySelector(
+          '.signup-form input[type="email"]',
+        ).value;
+        const password = document.querySelector(
+          '.signup-form input[type="password"]',
+        ).value;
+
+        if (!name || !email || !password)
+          return showError("signup", "Plotësoni të gjitha fushat.");
+        if (password.length < 6)
+          return showError(
+            "signup",
+            "Fjalëkalimi duhet të ketë të paktën 6 karaktere.",
+          );
+
+        try {
+          const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password,
+          );
+          const user = userCredential.user;
+
+          // Save user to Firestore with role "user"
+          await setDoc(doc(db, "users", user.uid), {
+            name: name,
+            email: email,
+            role: "user",
+            createdAt: serverTimestamp(),
+          });
+
+          window.location.href = "home.html";
+        } catch (error) {
+          showError("signup", getErrorMessage(error.code));
+        }
+      };
+
+      // FORGOT PASSWORD
+      window.resetPassword = async () => {
+        const email = document.querySelector(
+          '.login-form input[type="email"]',
+        ).value;
+        if (!email)
+          return showError(
+            "login",
+            "Shkruani emailin tuaj për rivendosjen e fjalëkalimit.",
+          );
+
+        try {
+          await sendPasswordResetEmail(auth, email);
+          showSuccess("login", `Email për rivendosjen u dërgua tek ${email}`);
+        } catch (error) {
+          showError("login", getErrorMessage(error.code));
+        }
+      };
+
+      function showError(form, msg) {
+        const el = document.getElementById(`${form}-error`);
+        el.textContent = msg;
+        el.style.display = "block";
+        setTimeout(() => (el.style.display = "none"), 4000);
+      }
+
+      function showSuccess(form, msg) {
+        const el = document.getElementById(`${form}-error`);
+        el.textContent = msg;
+        el.style.color = "#4cd4ff";
+        el.style.display = "block";
+        setTimeout(() => {
+          el.style.display = "none";
+          el.style.color = "#ff6b6b";
+        }, 5000);
+      }
+
+      function getErrorMessage(code) {
+        const messages = {
+          "auth/user-not-found": "Nuk u gjet asnjë llogari me këtë email.",
+          "auth/wrong-password": "Fjalëkalimi është i gabuar.",
+          "auth/email-already-in-use": "Ky email është tashmë në përdorim.",
+          "auth/invalid-email": "Adresa email është e pavlefshme.",
+          "auth/weak-password": "Fjalëkalimi është shumë i dobët.",
+          "auth/invalid-credential": "Email ose fjalëkalim i gabuar.",
+          "auth/too-many-requests": "Shumë tentativa. Provo përsëri më vonë.",
+        };
+        return messages[code] || "Ndodhi një gabim. Provo përsëri.";
+      }
+    </script>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0b0e17;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-image:
+          radial-gradient(
+            circle at 20% 30%,
+            rgba(32, 45, 72, 0.4) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 70%,
+            rgba(21, 26, 40, 0.3) 0%,
+            transparent 50%
+          );
+      }
+
+      .auth-container {
+        background: #111622;
+        border: 1px solid #1f2738;
+        border-radius: 18px;
+        padding: 45px 40px;
+        width: 400px;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+        text-align: center;
+      }
+
+      .brand {
+        font-size: 22px;
+        font-weight: bold;
+        color: #72d6ff;
+        margin-bottom: 25px;
+        letter-spacing: 1px;
+      }
+
+      .auth-container h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: white;
+      }
+
+      .auth-container input {
+        width: 100%;
+        padding: 14px;
+        margin: 8px 0;
+        border-radius: 10px;
+        border: 1px solid #222b3a;
+        background: #151a25;
+        color: white;
+        font-size: 15px;
+        transition: 0.2s;
+      }
+
+      .auth-container input:focus {
+        border-color: #4cd4ff;
+        outline: none;
+        background: #1a1f2b;
+      }
+
+      .auth-container button {
+        width: 100%;
+        padding: 14px;
+        margin-top: 16px;
+        border: none;
+        border-radius: 12px;
+        background: #4cd4ff;
+        color: black;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.25s;
+      }
+
+      .auth-container button:hover {
+        background: #67dcff;
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(76, 212, 255, 0.5);
+      }
+
+      .error-msg {
+        display: none;
+        color: #ff6b6b;
+        font-size: 13px;
+        margin-top: 10px;
+        padding: 8px 12px;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 107, 107, 0.2);
+      }
+
+      input[name="auth-toggle"] {
+        display: none;
+      }
+
+      .toggle-labels {
+        display: flex;
+        justify-content: center;
+        gap: 35px;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #1f2738;
+        padding-bottom: 15px;
+      }
+
+      .toggle-labels label {
+        cursor: pointer;
+        color: #777;
+        font-size: 16px;
+        padding-bottom: 4px;
+        border-bottom: 2px solid transparent;
+        transition: 0.25s;
+      }
+
+      #login:checked ~ .toggle-labels label[for="login"],
+      #signup:checked ~ .toggle-labels label[for="signup"] {
+        color: #72d6ff;
+        font-weight: bold;
+        border-bottom: 2px solid #4cd4ff;
+      }
+
+      .form-section {
+        display: none;
+        animation: fadeIn 0.4s ease;
+      }
+
+      #login:checked ~ .login-form,
+      #signup:checked ~ .signup-form {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .small-link {
+        margin-top: 14px;
+        font-size: 13px;
+        opacity: 0.7;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .small-link:hover {
+        opacity: 1;
+        color: #4cd4ff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="auth-container">
+      <div class="brand">⚡ TechForge</div>
+
+      <input type="radio" id="login" name="auth-toggle" checked />
+      <input type="radio" id="signup" name="auth-toggle" />
+
+      <div class="toggle-labels">
+        <label for="login">Hyrje</label>
+        <label for="signup">Regjistrohu</label>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div class="form-section login-form">
+        <h2>Mirë Se Erdhe</h2>
+        <input type="email" placeholder="Adresa Email" required />
+        <div style="position: relative; margin: 8px 0">
+          <input
+            id="login-pw"
+            type="password"
+            placeholder="Fjalëkalimi"
+            required
+            style="
+              width: 100%;
+              padding: 14px;
+              padding-right: 46px;
+              border-radius: 10px;
+              border: 1px solid #222b3a;
+              background: #151a25;
+              color: white;
+              font-size: 15px;
+            "
+          />
+          <span
+            onclick="
+              var i = document.getElementById('login-pw');
+              i.type = i.type === 'password' ? 'text' : 'password';
+              this.textContent = i.type === 'password' ? '👁️' : '🙈';
+            "
+            style="
+              position: absolute;
+              right: 14px;
+              top: 50%;
+              transform: translateY(-50%);
+              cursor: pointer;
+              font-size: 16px;
+              user-select: none;
+            "
+            >👁️</span
+          >
+        </div>
+        <div class="error-msg" id="login-error"></div>
+        <button type="button" onclick="hyrje()">Hyr</button>
+        <div class="small-link" onclick="resetPassword()">
+          Harruat fjalëkalimin?
+        </div>
+      </div>
+
+      <!-- SIGNUP FORM -->
+      <div class="form-section signup-form">
+        <h2>Krijo Llogari</h2>
+        <input type="text" placeholder="Emri i Plotë" required />
+        <input type="email" placeholder="Adresa Email" required />
+        <input
+          type="password"
+          placeholder="Krijo Fjalëkalim (min. 6 karaktere)"
+          required
+        />
+        <div class="error-msg" id="signup-error"></div>
+        <button type="button" onclick="regjistrohu()">Regjistrohu</button>
+        <div class="small-link">
+          Keni tashmë një llogari?
+          <label for="login" style="color: #4cd4ff; cursor: pointer"
+            >Hyni këtu</label
+          >
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

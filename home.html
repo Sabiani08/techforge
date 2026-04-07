@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="sq">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TechForge — Ndërto Makinën Tënde të Ëndrrave</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0b0e17;
+        color: white;
+      }
+      nav {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 40px;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid #1c2539;
+      }
+      nav .logo {
+        font-size: 22px;
+        font-weight: bold;
+        color: #72d6ff;
+      }
+      nav ul {
+        list-style: none;
+        display: flex;
+        gap: 30px;
+        margin: 0;
+        padding: 0;
+      }
+      nav ul li {
+        cursor: pointer;
+        opacity: 0.8;
+        transition: 0.2s;
+      }
+      nav ul li:hover {
+        color: #72d6ff;
+        opacity: 1;
+      }
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .logout-btn {
+        background: transparent;
+        border: 1px solid #1c2539;
+        color: #aaa;
+        padding: 7px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: 0.2s;
+      }
+      .logout-btn:hover {
+        border-color: #ff6b6b;
+        color: #ff6b6b;
+      }
+      .hero {
+        padding: 80px 20px 40px;
+        text-align: center;
+      }
+      .hero h1 {
+        font-size: 40px;
+        margin: 0;
+      }
+      .hero h2 {
+        font-size: 52px;
+        margin: 10px 0 20px 0;
+        color: #72d6ff;
+      }
+      .hero p {
+        max-width: 700px;
+        margin: auto;
+        opacity: 0.8;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+      .buttons {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+      }
+      button.start {
+        padding: 12px 26px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        background: #50d7ff;
+        color: #0b0e17;
+        transition: 0.3s;
+      }
+      button.start:hover {
+        background: #67dcff;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(80, 215, 255, 0.3);
+      }
+      .stats {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin-top: 40px;
+        text-align: center;
+      }
+      .stat h3 {
+        margin: 0;
+        font-size: 24px;
+        color: #72d6ff;
+      }
+      .stat p {
+        margin: 5px 0 0;
+        opacity: 0.7;
+      }
+
+      /* AI */
+      .ai-section {
+        max-width: 1000px;
+        margin: 50px auto 10px;
+        padding: 0 20px;
+      }
+      .ai-box {
+        background: linear-gradient(135deg, #111622, #0e1520);
+        border: 1px solid #2a3a5c;
+        border-radius: 16px;
+        padding: 28px 30px;
+        box-shadow: 0 0 40px rgba(76, 212, 255, 0.05);
+      }
+      .ai-box h3 {
+        margin: 0 0 6px;
+        color: #72d6ff;
+        font-size: 20px;
+      }
+      .ai-box p {
+        margin: 0 0 16px;
+        opacity: 0.65;
+        font-size: 14px;
+      }
+      .ai-input-row {
+        display: flex;
+        gap: 12px;
+      }
+      .ai-input-row textarea {
+        flex: 1;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid #222b3a;
+        background: #151a25;
+        color: white;
+        font-size: 14px;
+        resize: none;
+        height: 56px;
+        line-height: 1.5;
+        font-family: inherit;
+        transition: 0.2s;
+      }
+      .ai-input-row textarea:focus {
+        border-color: #4cd4ff;
+        outline: none;
+      }
+      .ai-input-row button {
+        padding: 0 24px;
+        background: #4cd4ff;
+        color: black;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 15px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: 0.25s;
+        height: 56px;
+      }
+      .ai-input-row button:hover {
+        background: #67dcff;
+      }
+      .ai-input-row button:disabled {
+        background: #2a3a5c;
+        color: #555;
+        cursor: not-allowed;
+      }
+      .ai-result {
+        margin-top: 16px;
+        padding: 16px 18px;
+        background: rgba(76, 212, 255, 0.06);
+        border: 1px solid rgba(76, 212, 255, 0.15);
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.7;
+        display: none;
+      }
+      .ai-result.visible {
+        display: block;
+        animation: fadeIn 0.4s ease;
+      }
+      .ai-typing {
+        color: #72d6ff;
+        opacity: 0.7;
+        font-style: italic;
+      }
+
+      /* FILTER */
+      .filter-section {
+        max-width: 1000px;
+        margin: 30px auto 0;
+        padding: 0 20px;
+      }
+      .filter-box {
+        background: #111622;
+        border: 1px solid #1f2738;
+        border-radius: 16px;
+        padding: 24px 28px;
+      }
+      .filter-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .filter-top h3 {
+        margin: 0;
+        color: #72d6ff;
+        font-size: 18px;
+      }
+      .filter-results-count {
+        font-size: 13px;
+        opacity: 0.5;
+      }
+      .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      .filter-group label {
+        display: block;
+        font-size: 11px;
+        color: #6fbaff;
+        letter-spacing: 0.8px;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+      }
+      .filter-group input[type="text"],
+      .filter-group select {
+        width: 100%;
+        padding: 9px 12px;
+        border-radius: 8px;
+        border: 1px solid #222b3a;
+        background: #151a25;
+        color: white;
+        font-size: 13px;
+        transition: 0.2s;
+        font-family: inherit;
+      }
+      .filter-group input[type="text"]:focus,
+      .filter-group select:focus {
+        border-color: #4cd4ff;
+        outline: none;
+      }
+      .price-range-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .price-range-row input {
+        flex: 1;
+        width: auto;
+        padding: 9px 10px;
+        border-radius: 8px;
+        border: 1px solid #222b3a;
+        background: #151a25;
+        color: white;
+        font-size: 13px;
+        font-family: inherit;
+      }
+      .price-range-row input:focus {
+        border-color: #4cd4ff;
+        outline: none;
+      }
+      .price-range-row span {
+        opacity: 0.4;
+        font-size: 12px;
+      }
+      .filter-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        border-top: 1px solid #1a2030;
+        padding-top: 16px;
+        flex-wrap: wrap;
+      }
+      .sort-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+      }
+      .sort-group label {
+        font-size: 12px;
+        color: #6fbaff;
+        white-space: nowrap;
+      }
+      .sort-group select {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #222b3a;
+        background: #151a25;
+        color: white;
+        font-size: 13px;
+        font-family: inherit;
+      }
+      .btn-reset {
+        padding: 9px 20px;
+        background: transparent;
+        border: 1px solid #1f2738;
+        border-radius: 8px;
+        color: #aaa;
+        font-size: 13px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .btn-reset:hover {
+        border-color: #ff6b6b;
+        color: #ff6b6b;
+      }
+      .active-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      .filter-chip {
+        background: rgba(76, 212, 255, 0.1);
+        border: 1px solid rgba(76, 212, 255, 0.3);
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 12px;
+        color: #72d6ff;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .filter-chip button {
+        background: none;
+        border: none;
+        color: #72d6ff;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 0;
+        line-height: 1;
+        opacity: 0.7;
+        transition: 0.2s;
+      }
+      .filter-chip button:hover {
+        opacity: 1;
+      }
+
+      /* STORE */
+      .store-header {
+        text-align: center;
+        padding: 30px 20px 0;
+        font-size: 13px;
+        opacity: 0.5;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .store {
+        margin-top: 30px;
+        padding: 30px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 28px;
+        max-width: 1300px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .skeleton {
+        background: linear-gradient(180deg, #141824, #0c0f17);
+        border: 1px solid #1c2539;
+        border-radius: 16px;
+        padding: 22px;
+        height: 400px;
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      .product {
+        background: linear-gradient(180deg, #141824, #0c0f17);
+        border: 1px solid #1c2539;
+        border-radius: 16px;
+        padding: 22px;
+        position: relative;
+        transition: 0.3s ease;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
+        display: flex;
+        flex-direction: column;
+        animation: fadeIn 0.5s ease;
+      }
+      .product:hover {
+        transform: translateY(-6px);
+        border-color: #69d7ff;
+      }
+      .window-lights {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .light {
+        width: 12px;
+        height: 12px;
+        background: #aaa;
+        border-radius: 50%;
+        opacity: 0.4;
+      }
+      .light.green {
+        background: #adff2f;
+        opacity: 1;
+      }
+      .product-icon {
+        width: 100%;
+        height: 180px;
+        background: #0e111a;
+        border-radius: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        margin-bottom: 18px;
+      }
+      .product-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .product h3 {
+        font-size: 12px;
+        color: #6fbaff;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+      }
+      .product h4 {
+        font-size: 20px;
+        margin: 0;
+      }
+      .tagline {
+        opacity: 0.7;
+        margin-bottom: 12px;
+        min-height: 40px;
+        font-style: italic;
+      }
+      .spec-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+        min-height: 60px;
+      }
+      .badge {
+        background: #151a28;
+        border: 1px solid #1f2739;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        opacity: 0.9;
+        transition: 0.2s;
+      }
+      .badge:hover {
+        border-color: #72d6ff;
+        opacity: 1;
+      }
+      .price-display {
+        font-size: 22px;
+        font-weight: bold;
+        color: #4cd4ff;
+        margin-bottom: 12px;
+      }
+      .product .customize-btn {
+        margin-top: auto;
+        display: block;
+        text-align: center;
+        background: #4cd4ff;
+        padding: 12px;
+        border-radius: 10px;
+        color: black;
+        font-weight: bold;
+        text-decoration: none;
+        transition: 0.3s;
+      }
+      .product .customize-btn:hover {
+        background: #67dcff;
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(76, 212, 255, 0.5);
+      }
+      .empty-state {
+        grid-column: 1/-1;
+        text-align: center;
+        padding: 60px 20px;
+        opacity: 0.5;
+        font-size: 18px;
+      }
+
+      /* FOOTER */
+      .footer {
+        background: #111318;
+        padding: 60px 40px 30px;
+        color: #bbb;
+        border-top: 1px solid #1f2430;
+        margin-top: 60px;
+      }
+      .footer-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 60px;
+        flex-wrap: wrap;
+      }
+      .footer-section {
+        flex: 1;
+        min-width: 220px;
+      }
+      .footer-title {
+        font-size: 22px;
+        color: #e6e6e6;
+        margin-bottom: 10px;
+      }
+      .footer-subtitle {
+        font-size: 16px;
+        color: #d2d2d2;
+        margin-bottom: 15px;
+      }
+      .footer-text {
+        opacity: 0.8;
+        line-height: 1.6;
+      }
+      .footer-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .footer-links li {
+        margin-bottom: 8px;
+        opacity: 0.75;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .footer-links li:hover {
+        opacity: 1;
+        color: #72d6ff;
+      }
+      .footer-bottom {
+        border-top: 1px solid #1f2430;
+        margin-top: 40px;
+        padding-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        font-size: 14px;
+        opacity: 0.7;
+      }
+      .footer-bottom-links span {
+        margin-left: 20px;
+        cursor: pointer;
+      }
+      .footer-bottom-links span:hover {
+        color: #72d6ff;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @media (max-width: 900px) {
+        .hero h2 {
+          font-size: 40px;
+        }
+        .filter-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 520px) {
+        nav {
+          padding: 14px 18px;
+          flex-direction: column;
+          gap: 15px;
+        }
+        .store {
+          padding: 18px;
+          gap: 18px;
+        }
+        .hero {
+          padding: 40px 12px;
+        }
+        .ai-input-row {
+          flex-direction: column;
+        }
+        .ai-input-row button {
+          height: 44px;
+        }
+        .filter-grid {
+          grid-template-columns: 1fr;
+        }
+        .filter-actions {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">⚡ TechForge</div>
+      <ul>
+        <li onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">Kreu</li>
+        <li
+          onclick="
+            document
+              .getElementById('store')
+              .scrollIntoView({ behavior: 'smooth' })
+          "
+        >
+          Dyqani
+        </li>
+      </ul>
+      <div class="nav-right">
+        <span id="user-name" style="font-size: 14px; opacity: 0.6"></span>
+        <button class="logout-btn" onclick="dil()">Dil</button>
+      </div>
+    </nav>
+
+    <div class="hero">
+      <h1>Ndërto</h1>
+      <h2>Makinën Tënde të Ëndrrave</h2>
+      <p>
+        Personalizo çdo detaj. Zgjidh ngjyrën, zgjidh specifikat, dhe krijo
+        laptopin perfekt që përputhet me stilin tënd.
+      </p>
+      <div class="buttons">
+        <button
+          class="start"
+          onclick="
+            document
+              .getElementById('store')
+              .scrollIntoView({ behavior: 'smooth' })
+          "
+        >
+          Fillo Personalizimin →
+        </button>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <h3>50+</h3>
+          <p>Konfigurime</p>
+        </div>
+        <div class="stat">
+          <h3>24h</h3>
+          <p>Dërgesë e Shpejtë</p>
+        </div>
+        <div class="stat">
+          <h3>3vjet</h3>
+          <p>Garanci</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI FILTER -->
+    <div class="ai-section">
+      <div class="ai-box">
+        <h3>🤖 Gjej Laptopin Ideal me AI</h3>
+        <p>
+          Shkruaj nevojat tuaja dhe AI do të rekomandojë laptopin më të mirë për
+          ju — buxheti, përdorimi, preferencat.
+        </p>
+        <div class="ai-input-row">
+          <textarea
+            id="ai-prompt"
+            placeholder="Shembull: Dua një laptop gaming nën $1500, i lehtë, me RTX 4060, për studentë..."
+          ></textarea>
+          <button id="ai-btn" onclick="kerkoDheRakomando()">
+            🔍 Kërko me AI
+          </button>
+        </div>
+        <div class="ai-result" id="ai-result"></div>
+      </div>
+    </div>
+
+    <!-- MANUAL FILTER -->
+    <div class="filter-section">
+      <div class="filter-box">
+        <div class="filter-top">
+          <h3>🔧 Filtro Laptopët</h3>
+          <span class="filter-results-count" id="filter-count"></span>
+        </div>
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label>Kërko me Emër</label>
+            <input
+              type="text"
+              id="f-name"
+              placeholder="p.sh. ROG, MacBook..."
+              oninput="applyFilters()"
+            />
+          </div>
+          <div class="filter-group">
+            <label>Brand</label>
+            <select id="f-brand" onchange="applyFilters()">
+              <option value="">Të Gjitha</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>GPU</label>
+            <select id="f-gpu" onchange="applyFilters()">
+              <option value="">Të Gjitha</option>
+              <option value="rtx">NVIDIA RTX</option>
+              <option value="gtx">NVIDIA GTX</option>
+              <option value="integrated">Integrated</option>
+              <option value="m3">Apple M3</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>RAM Minimale</label>
+            <select id="f-ram" onchange="applyFilters()">
+              <option value="0">Çdo RAM</option>
+              <option value="8">8GB+</option>
+              <option value="16">16GB+</option>
+              <option value="32">32GB+</option>
+              <option value="64">64GB+</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Storage Minimale</label>
+            <select id="f-storage" onchange="applyFilters()">
+              <option value="0">Çdo Storage</option>
+              <option value="256">256GB+</option>
+              <option value="512">512GB+</option>
+              <option value="1024">1TB+</option>
+              <option value="2048">2TB+</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Çmimi ($)</label>
+            <div class="price-range-row">
+              <input
+                type="number"
+                id="f-price-min"
+                placeholder="Min"
+                oninput="applyFilters()"
+              />
+              <span>—</span>
+              <input
+                type="number"
+                id="f-price-max"
+                placeholder="Max"
+                oninput="applyFilters()"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <div class="sort-group">
+            <label>Rendit:</label>
+            <select id="f-sort" onchange="applyFilters()">
+              <option value="default">Parazgjedhje</option>
+              <option value="price-asc">Çmimi: I Ulët → I Lartë</option>
+              <option value="price-desc">Çmimi: I Lartë → I Ulët</option>
+              <option value="name-asc">Emri: A → Z</option>
+              <option value="ram-desc">RAM: Më i Lartë</option>
+              <option value="storage-desc">Storage: Më i Lartë</option>
+            </select>
+          </div>
+          <button class="btn-reset" onclick="resetFilters()">
+            ✕ Pastro Filtrat
+          </button>
+        </div>
+        <div class="active-filters" id="active-filters"></div>
+      </div>
+    </div>
+
+    <div class="store-header">— Laptopët Tanë —</div>
+    <div class="store" id="store">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-section">
+          <h3 class="footer-title">TechForge</h3>
+          <p class="footer-text">
+            Krijimi i laptopëve të personalizuar që përputhen me stilin tuaj
+            unik dhe nevojat e performancës.
+          </p>
+        </div>
+        <div class="footer-section">
+          <h4 class="footer-subtitle">Lidhje të Shpejta</h4>
+          <ul class="footer-links">
+            <li>Kreu</li>
+            <li>Dyqani</li>
+            <li>Personalizo</li>
+            <li>Rreth Nesh</li>
+            <li>Asistencë</li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4 class="footer-subtitle">Kontakt</h4>
+          <p class="footer-text">
+            <a
+              href="/cdn-cgi/l/email-protection"
+              class="__cf_email__"
+              data-cfemail="d7beb9b1b897a3b2b4bfb1b8a5b0b2f9b6bb"
+              >[email&#160;protected]</a
+            >
+          </p>
+          <p class="footer-text">1-800-TECHFORGE</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 TechForge. Të gjitha të drejtat e rezervuara.</p>
+        <div class="footer-bottom-links">
+          <span>Politika e Privatësisë</span><span>Kushtet e Shërbimit</span>
+        </div>
+      </div>
+    </footer>
+
+    <script
+      data-cfasync="false"
+      src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+    ></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        query,
+        orderBy,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDuJ33idxuEK4OBuicT3OQ10jFgstPHeR8",
+        authDomain: "techforge-d33e7.firebaseapp.com",
+        projectId: "techforge-d33e7",
+        storageBucket: "techforge-d33e7.appspot.com",
+        messagingSenderId: "1042508194398",
+        appId: "1:1042508194398:web:ea46e7a3f87803fb43cacf",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      let allProducts = [];
+
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.href = "index.html";
+          return;
+        }
+        document.getElementById("user-name").textContent = user.email;
+        loadProducts();
+      });
+
+      window.dil = async () => {
+        await signOut(auth);
+        window.location.href = "index.html";
+      };
+
+      async function loadProducts() {
+        try {
+          const snapshot = await getDocs(
+            query(collection(db, "products"), orderBy("createdAt", "desc")),
+          );
+          allProducts = [];
+          snapshot.forEach((doc) =>
+            allProducts.push({ id: doc.id, ...doc.data() }),
+          );
+          populateBrandFilter();
+          applyFilters();
+        } catch (err) {
+          document.getElementById("store").innerHTML =
+            `<div class="empty-state">⚠️ Gabim në ngarkimin e produkteve.</div>`;
+        }
+      }
+
+      function populateBrandFilter() {
+        const brands = [
+          ...new Set(allProducts.map((p) => p.brand).filter(Boolean)),
+        ].sort();
+        const select = document.getElementById("f-brand");
+        select.innerHTML = `<option value="">Të Gjitha</option>`;
+        brands.forEach(
+          (b) =>
+            (select.innerHTML += `<option value="${b.toLowerCase()}">${b}</option>`),
+        );
+      }
+
+      window.applyFilters = () => {
+        const name = document
+          .getElementById("f-name")
+          .value.toLowerCase()
+          .trim();
+        const brand = document.getElementById("f-brand").value.toLowerCase();
+        const gpu = document.getElementById("f-gpu").value.toLowerCase();
+        const ram = parseInt(document.getElementById("f-ram").value) || 0;
+        const storage =
+          parseInt(document.getElementById("f-storage").value) || 0;
+        const priceMin =
+          parseFloat(document.getElementById("f-price-min").value) || 0;
+        const priceMax =
+          parseFloat(document.getElementById("f-price-max").value) || Infinity;
+        const sort = document.getElementById("f-sort").value;
+
+        let filtered = allProducts.filter((p) => {
+          if (
+            name &&
+            !`${p.brand} ${p.name} ${p.cpu} ${p.gpu}`
+              .toLowerCase()
+              .includes(name)
+          )
+            return false;
+          if (brand && (p.brand || "").toLowerCase() !== brand) return false;
+          if (gpu) {
+            const pGpu = (p.gpu || "").toLowerCase();
+            if (gpu === "integrated" && !pGpu.includes("integrated"))
+              return false;
+            if (gpu === "rtx" && !pGpu.includes("rtx")) return false;
+            if (gpu === "gtx" && !pGpu.includes("gtx")) return false;
+            if (gpu === "m3" && !pGpu.includes("m3")) return false;
+          }
+          if (ram && (p.ram || 0) < ram) return false;
+          if (storage && (p.storage || 0) < storage) return false;
+          if (p.basePrice < priceMin || p.basePrice > priceMax) return false;
+          return true;
+        });
+
+        // Sort
+        const s = [...filtered];
+        switch (sort) {
+          case "price-asc":
+            filtered = s.sort((a, b) => a.basePrice - b.basePrice);
+            break;
+          case "price-desc":
+            filtered = s.sort((a, b) => b.basePrice - a.basePrice);
+            break;
+          case "name-asc":
+            filtered = s.sort((a, b) =>
+              `${a.brand} ${a.name}`.localeCompare(`${b.brand} ${b.name}`),
+            );
+            break;
+          case "ram-desc":
+            filtered = s.sort((a, b) => (b.ram || 0) - (a.ram || 0));
+            break;
+          case "storage-desc":
+            filtered = s.sort((a, b) => (b.storage || 0) - (a.storage || 0));
+            break;
+        }
+
+        document.getElementById("filter-count").textContent =
+          filtered.length === allProducts.length
+            ? `${allProducts.length} laptop`
+            : `${filtered.length} / ${allProducts.length} laptop`;
+
+        updateChips({
+          name,
+          brand,
+          gpu,
+          ram,
+          storage,
+          priceMin,
+          priceMax,
+          sort,
+        });
+        renderProducts(filtered);
+      };
+
+      function updateChips({
+        name,
+        brand,
+        gpu,
+        ram,
+        storage,
+        priceMin,
+        priceMax,
+        sort,
+      }) {
+        const chips = [];
+        if (name)
+          chips.push({
+            label: `"${name}"`,
+            clear: () => {
+              document.getElementById("f-name").value = "";
+              applyFilters();
+            },
+          });
+        if (brand)
+          chips.push({
+            label: `Brand: ${brand.toUpperCase()}`,
+            clear: () => {
+              document.getElementById("f-brand").value = "";
+              applyFilters();
+            },
+          });
+        if (gpu)
+          chips.push({
+            label: `GPU: ${gpu.toUpperCase()}`,
+            clear: () => {
+              document.getElementById("f-gpu").value = "";
+              applyFilters();
+            },
+          });
+        if (ram)
+          chips.push({
+            label: `RAM: ${ram}GB+`,
+            clear: () => {
+              document.getElementById("f-ram").value = "0";
+              applyFilters();
+            },
+          });
+        if (storage)
+          chips.push({
+            label: `Storage: ${storage >= 1024 ? storage / 1024 + "TB" : storage + "GB"}+`,
+            clear: () => {
+              document.getElementById("f-storage").value = "0";
+              applyFilters();
+            },
+          });
+        if (priceMin > 0)
+          chips.push({
+            label: `Min: $${priceMin}`,
+            clear: () => {
+              document.getElementById("f-price-min").value = "";
+              applyFilters();
+            },
+          });
+        if (priceMax < Infinity)
+          chips.push({
+            label: `Max: $${priceMax}`,
+            clear: () => {
+              document.getElementById("f-price-max").value = "";
+              applyFilters();
+            },
+          });
+        if (sort !== "default")
+          chips.push({
+            label:
+              document.getElementById("f-sort").options[
+                document.getElementById("f-sort").selectedIndex
+              ].text,
+            clear: () => {
+              document.getElementById("f-sort").value = "default";
+              applyFilters();
+            },
+          });
+        window._chipClears = chips.map((c) => c.clear);
+        document.getElementById("active-filters").innerHTML = chips
+          .map(
+            (c, i) =>
+              `<div class="filter-chip">${c.label}<button onclick="window._chipClears[${i}]()">×</button></div>`,
+          )
+          .join("");
+      }
+
+      window.resetFilters = () => {
+        ["f-name"].forEach((id) => (document.getElementById(id).value = ""));
+        ["f-brand", "f-gpu"].forEach(
+          (id) => (document.getElementById(id).value = ""),
+        );
+        ["f-ram", "f-storage"].forEach(
+          (id) => (document.getElementById(id).value = "0"),
+        );
+        document.getElementById("f-price-min").value = "";
+        document.getElementById("f-price-max").value = "";
+        document.getElementById("f-sort").value = "default";
+        applyFilters();
+      };
+
+      function renderProducts(products) {
+        const store = document.getElementById("store");
+        if (products.length === 0) {
+          store.innerHTML = `<div class="empty-state">🔍 Nuk u gjet asnjë laptop me këto filtra.<br><span style="font-size:14px;margin-top:8px;display:block">Provo të ndryshosh kriteret e kërkimit.</span></div>`;
+          return;
+        }
+        store.innerHTML = products
+          .map((p) => {
+            const badges = [
+              p.cpu,
+              p.ram ? p.ram + "GB RAM" : null,
+              p.storage
+                ? p.storage >= 1024
+                  ? p.storage / 1024 + "TB SSD"
+                  : p.storage + "GB SSD"
+                : null,
+              p.screen,
+              p.refreshRate,
+              p.gpu && p.gpu.toLowerCase() !== "integrated"
+                ? p.gpu.toUpperCase()
+                : null,
+            ]
+              .filter(Boolean)
+              .map((s) => `<span class="badge">${s}</span>`)
+              .join("");
+            const lights = [0, 1, 2]
+              .map(
+                (i) =>
+                  `<div class="light${i === Math.floor(Math.random() * 3) ? " green" : ""}"></div>`,
+              )
+              .join("");
+            const url = `customize.html?model=${p.model}&basePrice=${p.basePrice}&cpu=${encodeURIComponent(p.cpu)}&gpu=${encodeURIComponent(p.gpu)}&ram=${p.ram}&storage=${p.storage}&name=${encodeURIComponent(p.name)}&brand=${encodeURIComponent(p.brand)}&image=${encodeURIComponent(p.image)}`;
+            return `
+            <div class="product">
+              <div class="window-lights">${lights}</div>
+              <div class="product-icon"><img src="${p.image}" onerror="this.src='https://via.placeholder.com/300x180/0e111a/4cd4ff?text=TechForge'" /></div>
+              <h3>${(p.brand || "").toUpperCase()}</h3>
+              <h4>${p.name}</h4>
+              <p class="tagline">${p.tagline || ""}</p>
+              <div class="spec-badges">${badges}</div>
+              <div class="price-display">$${p.basePrice?.toLocaleString()}</div>
+              <a href="${url}" class="customize-btn">Personalizo →</a>
+            </div>`;
+          })
+          .join("");
+      }
+
+      window._allProducts = () => allProducts;
+
+      window.kerkoDheRakomando = async () => {
+        const prompt = document.getElementById("ai-prompt").value.trim();
+        if (!prompt) return;
+        const btn = document.getElementById("ai-btn");
+        const resultBox = document.getElementById("ai-result");
+        btn.disabled = true;
+        btn.textContent = "Duke kërkuar...";
+        resultBox.className = "ai-result visible";
+        resultBox.innerHTML = `<span class="ai-typing">🤖 AI po analizon laptopët tuaj...</span>`;
+        const products = allProducts;
+        if (products.length === 0) {
+          resultBox.innerHTML = "⚠️ Nuk ka produkte.";
+          btn.disabled = false;
+          btn.textContent = "🔍 Kërko me AI";
+          return;
+        }
+        const catalogText = products
+          .map(
+            (p, i) =>
+              `${i + 1}. ${p.brand} ${p.name} — $${p.basePrice} | CPU: ${p.cpu} | GPU: ${p.gpu} | RAM: ${p.ram}GB | Storage: ${p.storage}GB | Screen: ${p.screen || "N/A"}`,
+          )
+          .join("\n");
+        try {
+          const response = await fetch("http://localhost:3001/ai", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "openrouter/auto",
+              max_tokens: 1000,
+              system: `Ti je një ekspert i laptopëve për dyqanin TechForge. Bazuar në katalogun e laptopëve dhe kërkesën e përdoruesit, rekomando 1-3 laptop të përshtatshëm. Shpjego pse secili është i mirë për nevojat e tyre. Përgjigju në shqip. Fillo direkt me rekomandimin, pa hyrje të gjata. Përdor emoji.`,
+              messages: [
+                {
+                  role: "user",
+                  content: `Katalogu:\n${catalogText}\n\nKërkesa: ${prompt}`,
+                },
+              ],
+            }),
+          });
+          const data = await response.json();
+          const text = data.content?.[0]?.text || "Nuk u mor përgjigje.";
+          resultBox.innerHTML = text.replace(/\n/g, "<br>");
+        } catch (err) {
+          resultBox.innerHTML = `⚠️ Gabim: ${err.message}`;
+        }
+        btn.disabled = false;
+        btn.textContent = "🔍 Kërko me AI";
+      };
+    </script>
+  </body>
+</html>

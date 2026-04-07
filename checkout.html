@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TechForge — Checkout</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #0b0e17; color: white; min-height: 100vh; }
+
+    nav { display: flex; justify-content: space-between; padding: 18px 40px; align-items: center; background: rgba(0,0,0,0.3); border-bottom: 1px solid #1c2539; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+    nav .logo { font-size: 22px; font-weight: bold; color: #72d6ff; text-decoration: none; }
+    .back-btn { color: #72d6ff; text-decoration: none; border: 1px solid #1c2539; padding: 8px 16px; border-radius: 8px; font-size: 14px; transition: 0.2s; }
+    .back-btn:hover { background: rgba(76,212,255,0.1); }
+
+    .page { max-width: 1000px; margin: 40px auto; padding: 0 24px 60px; display: grid; grid-template-columns: 1fr 400px; gap: 28px; }
+
+    /* ORDER SUMMARY */
+    .summary-card { background: #111622; border: 1px solid #1f2738; border-radius: 16px; padding: 28px; height: fit-content; position: sticky; top: 90px; }
+    .summary-card h2 { margin: 0 0 24px; color: #72d6ff; font-size: 18px; }
+    .product-summary { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #1a2030; }
+    .product-summary img { width: 80px; height: 60px; object-fit: cover; border-radius: 10px; background: #0e111a; }
+    .product-summary-info h3 { margin: 0 0 4px; font-size: 16px; }
+    .product-summary-info p { margin: 0; font-size: 13px; opacity: 0.55; }
+    .spec-list { margin-bottom: 24px; }
+    .spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #141c2a; font-size: 14px; }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-row span:first-child { opacity: 0.6; }
+    .spec-row span:last-child { color: #e0e0e0; font-weight: 500; }
+    .total-row { display: flex; justify-content: space-between; padding: 16px 0 0; font-size: 20px; font-weight: bold; }
+    .total-row span:last-child { color: #4cd4ff; }
+
+    /* CHECKOUT FORM */
+    .form-card { background: #111622; border: 1px solid #1f2738; border-radius: 16px; padding: 28px; }
+    .form-card h2 { margin: 0 0 24px; color: #72d6ff; font-size: 18px; }
+
+    .section-label { font-size: 12px; color: #6fbaff; letter-spacing: 0.8px; text-transform: uppercase; margin: 20px 0 12px; display: block; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; opacity: 0.6; margin-bottom: 5px; }
+    .form-group input, .form-group select { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #222b3a; background: #151a25; color: white; font-size: 14px; font-family: inherit; transition: 0.2s; }
+    .form-group input:focus, .form-group select:focus { border-color: #4cd4ff; outline: none; background: #1a1f2b; }
+    .form-group input::placeholder { color: #444; }
+
+    /* Payment options */
+    .payment-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .payment-opt { background: #151a25; border: 2px solid #222b3a; border-radius: 10px; padding: 12px 8px; text-align: center; cursor: pointer; transition: 0.2s; font-size: 13px; }
+    .payment-opt:hover { border-color: #2a3a5c; }
+    .payment-opt.selected { border-color: #4cd4ff; background: rgba(76,212,255,0.08); color: #72d6ff; }
+    .payment-opt .icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+    /* Place order btn */
+    .order-btn { width: 100%; padding: 16px; background: #4cd4ff; color: black; border: none; border-radius: 12px; font-size: 17px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 8px; }
+    .order-btn:hover { background: #67dcff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76,212,255,0.4); }
+    .order-btn:disabled { background: #1f2d40; color: #555; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .secure-note { text-align: center; font-size: 12px; opacity: 0.4; margin-top: 12px; }
+
+    /* SUCCESS MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 999; backdrop-filter: blur(4px); }
+    .modal-overlay.show { display: flex; animation: fadeIn 0.3s ease; }
+    .modal { background: #111622; border: 1px solid #2a3a5c; border-radius: 20px; padding: 50px 40px; text-align: center; max-width: 440px; width: 90%; animation: slideUp 0.4s ease; }
+    .modal .check { font-size: 64px; margin-bottom: 20px; animation: pop 0.5s ease 0.2s both; }
+    .modal h2 { margin: 0 0 12px; color: #72d6ff; font-size: 26px; }
+    .modal p { margin: 0 0 8px; opacity: 0.7; line-height: 1.6; }
+    .modal .order-id { font-size: 13px; color: #4cd4ff; margin: 16px 0; background: rgba(76,212,255,0.08); padding: 10px 16px; border-radius: 8px; border: 1px solid rgba(76,212,255,0.2); }
+    .modal-btn { display: inline-block; margin-top: 24px; padding: 13px 32px; background: #4cd4ff; color: black; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; text-decoration: none; transition: 0.2s; }
+    .modal-btn:hover { background: #67dcff; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+    @media (max-width: 800px) {
+      .page { grid-template-columns: 1fr; }
+      .summary-card { position: static; order: -1; }
+      .form-row { grid-template-columns: 1fr; }
+      .payment-options { grid-template-columns: 1fr 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="home.html" class="logo">⚡ TechForge</a>
+    <a href="home.html" class="back-btn">← Kthehu në Dyqan</a>
+  </nav>
+
+  <div class="page">
+
+    <!-- FORM -->
+    <div class="form-card">
+      <h2>📋 Detajet e Porosisë</h2>
+
+      <span class="section-label">Informacioni Personal</span>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Emri</label>
+          <input type="text" id="first-name" placeholder="Emri juaj" />
+        </div>
+        <div class="form-group">
+          <label>Mbiemri</label>
+          <input type="text" id="last-name" placeholder="Mbiemri juaj" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email" placeholder="email@example.com" />
+      </div>
+      <div class="form-group">
+        <label>Numri i Telefonit</label>
+        <input type="tel" id="phone" placeholder="+355 6X XXX XXXX" />
+      </div>
+
+      <span class="section-label">Adresa e Dërgimit</span>
+      <div class="form-group">
+        <label>Adresa</label>
+        <input type="text" id="address" placeholder="Rruga, Nr. apartamentit..." />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Qyteti</label>
+          <input type="text" id="city" placeholder="Tiranë" />
+        </div>
+        <div class="form-group">
+          <label>Kodi Postar</label>
+          <input type="text" id="zip" placeholder="1001" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Shteti</label>
+        <select id="country">
+          <option value="AL">🇦🇱 Shqipëri</option>
+          <option value="XK">🇽🇰 Kosovë</option>
+          <option value="MK">🇲🇰 Maqedoni e Veriut</option>
+          <option value="ME">🇲🇪 Mali i Zi</option>
+          <option value="OTHER">Tjetër</option>
+        </select>
+      </div>
+
+      <span class="section-label">Metoda e Pagesës</span>
+      <div class="payment-options">
+        <div class="payment-opt selected" onclick="selectPayment(this)" data-method="Visa/Mastercard">
+          <span class="icon">💳</span>Kartë
+        </div>
+        <div class="payment-opt" onclick="selectPayment(this)" data-method="PayPal">
+          <span class="icon">🅿️</span>PayPal
+        </div>
+        <div class="payment-opt" onclick="selectPayment(this)" data-method="Cash on Delivery">
+          <span class="icon">💵</span>Para Dorë
+        </div>
+      </div>
+
+      <button class="order-btn" onclick="placeOrder()">🛍️ Vendos Porosinë</button>
+      <p class="secure-note">🔒 Pagesa juaj është e sigurt dhe e enkriptuar</p>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="summary-card">
+      <h2>🛒 Përmbledhja e Porosisë</h2>
+      <div class="product-summary">
+        <img id="summary-img" src="" />
+        <div class="product-summary-info">
+          <h3 id="summary-name">—</h3>
+          <p id="summary-brand">—</p>
+        </div>
+      </div>
+      <div class="spec-list" id="spec-list"></div>
+      <div class="total-row">
+        <span>Totali</span>
+        <span id="summary-total">$0</span>
+      </div>
+      <div style="font-size:12px;opacity:0.4;margin-top:8px;text-align:right;">+ transport falas 🚚</div>
+    </div>
+
+  </div>
+
+  <!-- SUCCESS MODAL -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="check">✅</div>
+      <h2>Porosia u Vendos!</h2>
+      <p>Faleminderit për porosinë tuaj.<br>Do të merrni një email konfirmimi së shpejti.</p>
+      <div class="order-id" id="order-id-display"></div>
+      <p style="font-size:13px;">📦 Dërgesa pritet brenda <strong>24 orësh</strong></p>
+      <a href="home.html" class="modal-btn">← Kthehu në Dyqan</a>
+    </div>
+  </div>
+
+  <script>
+    // Read URL params
+    const params = new URLSearchParams(window.location.search);
+    const productName = params.get("name") || "Laptop";
+    const productBrand = params.get("brand") || "TechForge";
+    const productPrice = params.get("price") || "0";
+    const productImage = params.get("image") || "";
+    const productCpu = params.get("cpu") || "—";
+    const productGpu = params.get("gpu") || "—";
+    const productRam = params.get("ram") || "—";
+    const productStorage = params.get("storage") || "—";
+
+    // Fill summary
+    document.getElementById("summary-name").textContent = productName;
+    document.getElementById("summary-brand").textContent = productBrand;
+    document.getElementById("summary-total").textContent = `$${parseInt(productPrice).toLocaleString()}`;
+    if (productImage) document.getElementById("summary-img").src = productImage;
+
+    document.getElementById("spec-list").innerHTML = `
+      <div class="spec-row"><span>CPU</span><span>${productCpu}</span></div>
+      <div class="spec-row"><span>GPU</span><span>${productGpu.toUpperCase()}</span></div>
+      <div class="spec-row"><span>RAM</span><span>${productRam}GB</span></div>
+      <div class="spec-row"><span>Storage</span><span>${parseInt(productStorage)>=1024?parseInt(productStorage)/1024+"TB":productStorage+"GB"}</span></div>
+      <div class="spec-row"><span>Çmimi Bazë</span><span>$${parseInt(productPrice).toLocaleString()}</span></div>
+      <div class="spec-row"><span>Transport</span><span style="color:#4cd4ff">Falas</span></div>
+    `;
+
+    // Payment selection
+    function selectPayment(el) {
+      document.querySelectorAll(".payment-opt").forEach(o => o.classList.remove("selected"));
+      el.classList.add("selected");
+    }
+
+    // Place order
+    function placeOrder() {
+      const firstName = document.getElementById("first-name").value.trim();
+      const lastName = document.getElementById("last-name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const city = document.getElementById("city").value.trim();
+
+      if (!firstName || !lastName || !email || !address || !city) {
+        // Highlight empty fields
+        ["first-name","last-name","email","address","city"].forEach(id => {
+          const el = document.getElementById(id);
+          if (!el.value.trim()) { el.style.borderColor = "#ff6b6b"; setTimeout(() => el.style.borderColor = "", 3000); }
+        });
+        return;
+      }
+
+      const orderId = "TF-" + Date.now().toString().slice(-8).toUpperCase();
+      document.getElementById("order-id-display").textContent = `ID e Porosisë: ${orderId}`;
+      document.getElementById("modal").classList.add("show");
+    }
+  </script>
+</body>
+</html>
